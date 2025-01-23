@@ -1,0 +1,88 @@
+function updateCurrentCapacity(slot, num) {
+    slot.currentCapacity += num;
+}
+
+function suggestSlot(slot, allSlots, timeout) {
+    for each s in allSlots {
+        if s.id != slot.id && s.currentCapacity < s.maxCapacity && !s.is_temp_locked {
+            s.is_temp_locked = true;
+            s.locked_until = Date.now() + timeout;
+            startTimeout(s);
+            return s;
+        }
+    }
+    return null;
+}
+
+function startTimeout(slot) {
+    setTimeout(() => {
+        if (Date.now() > slot.locked_until) {
+            slot.is_temp_locked = false;
+        }
+    }, slot.locked_until - Date.now());
+}
+
+function setDeliverySlots(slotId, userId, timeout) {
+    suggestedSlot = null;
+    s = getSlot(slotId);
+
+    if s.currentCapacity < s.maxCapacity {
+        updateCurrentCapacity(s, 1);
+        s.users.add(userId);
+        return {
+            "status": "success",
+            "message": "Slot booked successfully",
+            "suggestedSlot": null
+        };
+    } else {
+        allSlots = getAllSlots();
+        suggestedSlot = suggestSlot(s, allSlots, timeout);
+        
+        if suggestedSlot == null {
+            return {
+                "status": "failure",
+                "message": "No available slots at this time. Please try again later.",
+                "suggestedSlot": null
+            };
+        } else {
+            return {
+                "status": "success",
+                "message": "Preferred slot unavailable. Suggested alternative: " + suggestedSlot.id,
+                "suggestedSlot": suggestedSlot
+            };
+        }
+    }
+}
+
+function confirmSuggestedSlot(confirmedSlotId, userId) {
+    s = getSlot(confirmedSlotId);
+
+    if s.is_temp_locked && s.currentCapacity < s.maxCapacity && Date.now() < s.locked_until {
+        updateCurrentCapacity(s, 1);
+        s.users.add(userId);
+        s.is_temp_locked = false;
+        s.locked_until = null;
+
+        return {
+            "status": "success",
+            "message": "Confirmed and booked alternative slot: " + confirmedSlotId
+        };
+    } else {
+        return {
+            "status": "failure",
+            "message": "The selected slot is no longer available. Please choose another."
+        };
+    }
+}
+
+function cancelSuggestedSlot(cancelledSlotId, userId) {
+    s = getSlot(cancelledSlotId);
+    
+    s.is_temp_locked = false;  
+    s.locked_until = null;
+
+    return {
+        "status": "success",
+        "message": "Booking canceled successfully for slot: " + cancelledSlotId
+    };
+}
