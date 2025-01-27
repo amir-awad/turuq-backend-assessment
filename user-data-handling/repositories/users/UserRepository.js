@@ -6,6 +6,10 @@ export class UserRepository {
 		return user.save();
 	}
 
+	async getUserByEmail(email) {
+		return User.findOne({ email });
+	}
+
 	async getUsers(page, limit, age) {
 		const query = age ? { age } : {};
 		return User.find(query)

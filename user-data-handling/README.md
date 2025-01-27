@@ -24,6 +24,7 @@ This project is a simple user data handling application. It allows users to crea
 ```
 PORT=8080
 MONGODB_URI=mongodb://localhost:27017/user-data
+JWT_SECRET=secret
 ```
 
 5. Run the application

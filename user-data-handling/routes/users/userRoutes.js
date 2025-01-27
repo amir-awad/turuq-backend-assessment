@@ -3,35 +3,8 @@ import { UserController } from "../../controllers/users/UserController.js";
 const router = express.Router();
 const userController = new UserController();
 import { validateRequest } from "../../middlewares/validationMiddleware.js";
-import {
-	createUserSchema,
-	updateUserSchema,
-} from "../../utilities/validationSchemas.js";
-
-/**
- * @openapi
- * /users:
- *   post:
- *     summary: Create a new user
- *     tags: [Users]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/CreateUserInput'
- *     responses:
- *       201:
- *         description: User created successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       500:
- *         description: Server error
- */
-router.post("/", validateRequest(createUserSchema), userController.createUser);
-
+import { updateUserSchema } from "../../utilities/validationSchemas.js";
+import { auth } from "../../middlewares/authMiddleware.js";
 /**
  * @openapi
  * /users:
@@ -66,7 +39,7 @@ router.post("/", validateRequest(createUserSchema), userController.createUser);
  *       500:
  *         description: Server error
  */
-router.get("/", userController.getUsers);
+router.get("/", auth, userController.getUsers);
 
 /**
  * @openapi
@@ -92,7 +65,7 @@ router.get("/", userController.getUsers);
  *       500:
  *         description: Server error
  */
-router.get("/:id", userController.getUserById);
+router.get("/:id", auth, userController.getUserById);
 
 /**
  * @openapi
@@ -126,6 +99,7 @@ router.get("/:id", userController.getUserById);
  */
 router.put(
 	"/:id",
+	auth,
 	validateRequest(updateUserSchema),
 	userController.updateUser,
 );
@@ -150,6 +124,6 @@ router.put(
  *       500:
  *         description: Server error
  */
-router.delete("/:id", userController.deleteUser);
+router.delete("/:id", auth, userController.deleteUser);
 
 export default router;

@@ -28,10 +28,21 @@ const swaggerOptions = {
 					},
 				},
 			},
+			securitySchemes: {
+				bearerAuth: {
+					type: "http",
+					scheme: "bearer",
+					bearerFormat: "JWT",
+				},
+			},
+			security: [{ bearerAuth: [] }],
 		},
-		tags: [{ name: "Users", description: "User management operations" }],
+		tags: [
+			{ name: "Users", description: "User management operations" },
+			{ name: "Auth", description: "Authentication operations" },
+		],
 	},
-	apis: ["./routes/users/userRoutes.js"],
+	apis: ["./routes/**/*.js"],
 };
 
 export default swaggerJsdoc(swaggerOptions);
