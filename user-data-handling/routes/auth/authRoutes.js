@@ -12,11 +12,6 @@ const authController = new AuthController();
 /**
  * @openapi
  * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
  *   schemas:
  *     LoginInput:
  *       type: object

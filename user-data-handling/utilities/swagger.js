@@ -35,8 +35,12 @@ const swaggerOptions = {
 					bearerFormat: "JWT",
 				},
 			},
-			security: [{ bearerAuth: [] }],
 		},
+		security: [
+			{
+				bearerAuth: [],
+			},
+		],
 		tags: [
 			{ name: "Users", description: "User management operations" },
 			{ name: "Auth", description: "Authentication operations" },
